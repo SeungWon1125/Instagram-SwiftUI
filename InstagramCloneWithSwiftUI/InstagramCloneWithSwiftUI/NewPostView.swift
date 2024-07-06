@@ -10,12 +10,15 @@ import SwiftUI
 struct NewPostView: View {
     // MARK: - Properties
     @State var caption = ""
+    @Binding var tabIndex: Int
+    
     var body: some View {
         VStack {
             // MARK: - Navigation Bar
             HStack{
                 Button {
                     print("DEBUG: 뒤로가기")
+                    tabIndex = 0
                 } label: {
                     Image(systemName: "chevron.left")
                         .tint(.black)
@@ -64,5 +67,5 @@ struct NewPostView: View {
 }
 
 #Preview {
-    NewPostView()
+    NewPostView(tabIndex: .constant(0))
 }
