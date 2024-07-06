@@ -54,15 +54,17 @@ struct NewPostView: View {
                 if let image = self.postImage { // 사진 선택 후
                     image
                         .resizable()
-        //                .frame(width: 300, height: 300)
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+//                        .aspectRatio(1, contentMode: .fit)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: 400)
+                        .clipped()
                 } else { // 사진 선택 전
                     Image(systemName: "photo.on.rectangle")
                         .resizable()
                         .aspectRatio(1, contentMode: .fit)
                         .frame(width: 150, height: 150)
                         .padding()
+                        .tint(.black)
                 }
             }
             // 변화 감지
