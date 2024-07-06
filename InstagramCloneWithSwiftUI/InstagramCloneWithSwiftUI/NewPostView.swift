@@ -6,11 +6,22 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct NewPostView: View {
     // MARK: - Properties
     @State var caption = ""
     @Binding var tabIndex: Int
+    @State var selectedItem: PhotosPickerItem?
+    @State var postImage: Image?
+    
+    // MARK: - Functions
+    func convertImage(item: PhotosPickerItem?) async {
+        guard let item = item else { return }
+        guard let data = try? await item.loadTransferable(type: Data.self) else { return } // 컴이 이해할 수 있는 데이터로 변경
+        guard let uiImage = UIImage(data: data) else { return } // UIImage형식으로 변경 (UIKit)
+        self.postImage = Image(uiImage: uiImage)
+    }
     
     var body: some View {
         VStack {
@@ -39,11 +50,27 @@ struct NewPostView: View {
             .padding(.horizontal)
             
             // MARK: - image View
-            Image("image_penguin")
-                .resizable()
-//                .frame(width: 300, height: 300)
-                .aspectRatio(1, contentMode: .fit)
-                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+            PhotosPicker(selection: $selectedItem) { // 사진 선택 변수 (바인딩)
+                if let image = self.postImage { // 사진 선택 후
+                    image
+                        .resizable()
+        //                .frame(width: 300, height: 300)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                } else { // 사진 선택 전
+                    Image(systemName: "photo.on.rectangle")
+                        .resizable()
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 150, height: 150)
+                        .padding()
+                }
+            }
+            // 변화 감지
+            .onChange(of: selectedItem) { oldValue, newValue in // 변화가 일어날 변수 넣기 (@State)
+                Task {
+                    await convertImage(item: newValue)
+                }
+            }
             
             // MARK: - TextField
             TextField("문구를 작성하거나 설문을 추가하세요...", text: $caption)
