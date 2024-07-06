@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct mainTabView: View {
+struct MainTabView: View {
     var body: some View {
         TabView {
             // MARK: - Feed View
@@ -23,7 +23,7 @@ struct mainTabView: View {
                 }
             
             // MARK: - New Post View
-            Text("NewPost")
+            NewPostView()
                 .tabItem {
                     Image(systemName: "plus.square")
                 }
@@ -44,5 +44,5 @@ struct mainTabView: View {
 }
 
 #Preview {
-    mainTabView()
+    MainTabView()
 }
