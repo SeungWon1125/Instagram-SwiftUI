@@ -16,9 +16,13 @@ struct NewPostView: View {
     @State var postImage: Image?
     
     // MARK: - Functions
-    func convertImage(item: PhotosPickerItem?) async {
+    func convertImage(item: PhotosPickerItem?) async { // async 키워드 사용, 비동기 처리 일 전달.
         guard let item = item else { return }
         guard let data = try? await item.loadTransferable(type: Data.self) else { return } // 컴이 이해할 수 있는 데이터로 변경
+        // loadTransferable 함수는 async가 붙어있으므로 비동기 처리를 해줘야 하는 함수
+        // 즉 시간이 오래 걸릴 수도 있는 함수이다.
+        // 따라서 await을 써주고 Task{}로 감싸줘야 하는데
+        // 이 함수에서 async키워드를 사용하면 상위 함수에게 일을 전달할 수 있다.
         guard let uiImage = UIImage(data: data) else { return } // UIImage형식으로 변경 (UIKit)
         self.postImage = Image(uiImage: uiImage)
     }
@@ -69,8 +73,8 @@ struct NewPostView: View {
             }
             // 변화 감지
             .onChange(of: selectedItem) { oldValue, newValue in // 변화가 일어날 변수 넣기 (@State)
-                Task {
-                    await convertImage(item: newValue)
+                Task { // 이쪽에서 다른 쓰레드로 보내는 작업
+                    await convertImage(item: newValue) // async 키워드를 사용했기 때문에 await사용
                 }
             }
             
